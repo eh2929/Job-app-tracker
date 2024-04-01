@@ -1,0 +1,82 @@
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
+from sqlalchemy.orm import relationship
+from sqlalchemy_serializer import SerializerMixin
+from config import db
+
+
+class User(db.Model, SerializerMixin):
+    __tablename__ = "user"
+    id = Column(Integer, primary_key=True)
+    username = Column(String)
+    # relationships
+    applications = relationship("JobApplication", backref="user")
+    # serialize rules
+    serialize_rules = ("-applications.user",)
+
+
+class Company(db.Model, SerializerMixin):
+    __tablename__ = "company"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    # relationships
+    contacts = relationship("Contact", backref="company")
+    applications = relationship("JobApplication", backref="company")
+    # serialize rules
+    serialize_rules = (
+        "-contacts.company",
+        "-applications.company",
+    )
+
+
+class Contact(db.Model, SerializerMixin):
+    __tablename__ = "contact"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    position = Column(String)
+    email = Column(String)
+    phone = Column(String)
+    company_id = Column(Integer, ForeignKey("company.id"))
+    # relationships
+    # serialize rules
+    serialize_rules = ("-company",)
+
+
+class JobApplication(db.Model, SerializerMixin):
+    __tablename__ = "job_application"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    company_id = Column(Integer, ForeignKey("company.id"))
+    job_title = Column(String)
+    application_date = Column(String)
+    status = Column(String)
+    job_description = Column(String)
+    application_deadline = Column(String)
+    salary_offered = Column(Integer)
+    first_interview_date = Column(String)
+    second_interview_date = Column(String)
+    follow_up_date = Column(String)
+    rejection_date = Column(String)
+    ghosting = Column(Boolean)
+    current_stage = Column(String)
+    # relationships
+    stages = relationship("InterviewStage", backref="job_application")
+    # serialize rules
+    serialize_rules = (
+        "-user.applications",
+        "-company.applications",
+        "-stages.job_application",
+    )
+
+
+class InterviewStage(db.Model, SerializerMixin):
+    __tablename__ = "interview_stage"
+    id = Column(Integer, primary_key=True)
+    job_application_id = Column(Integer, ForeignKey("job_application.id"))
+    interview_number = Column(Integer)
+    interview_date = Column(String)
+    interview_type = Column(String)
+    interviewer = Column(String)
+    interview_notes = Column(String)
+    # relationships
+    # serialize rules
+    serialize_rules = ("-job_application",)
