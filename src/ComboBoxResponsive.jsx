@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useEffect, useRef } from "react";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,15 +26,22 @@ const statuses = [
 
 export function ComboBoxResponsive({ field, options }) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [selectedStatus, setSelectedStatus] = React.useState(
+  const [selectedStatus, setSelectedStatus] = useState(
     field && field.value
       ? statuses.find((status) => status.value === field.value)
-      : null
+      : null // or some default value
   );
 
-  React.useEffect(() => {
-    if (field && field.onChange) {
+  const prevFieldValue = useRef(field.value);
+
+  useEffect(() => {
+    if (
+      field &&
+      field.onChange &&
+      selectedStatus?.value !== prevFieldValue.current
+    ) {
       field.onChange(selectedStatus ? selectedStatus.value : "");
+      prevFieldValue.current = selectedStatus?.value;
     }
   }, [selectedStatus, field]);
 

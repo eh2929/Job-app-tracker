@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./Navbar";
 import JobApplicationForm from "./JobApplicationForm";
+import Dashboard from "./Dashboard";
 
 function App() {
   return (
@@ -9,7 +10,7 @@ function App() {
       <Navbar /> {/* Render the navbar */}
       <Routes>
         <Route path="/apply" element={<JobApplicationForm />} />
-        <Route path="/" element={<h1>Hello</h1>} />
+        <Route path="/" element={<Dashboard />} />
       </Routes>
     </Router>
   );

@@ -167,8 +167,25 @@ api.add_resource(ContactResource, "/contacts/<int:contact_id>")
 # job applications
 class JobApplicationListResource(Resource):
     def get(self):
-        applications = JobApplication.query.all()
-        return [application.to_dict() for application in applications], 200
+        applications = (
+            db.session.query(JobApplication, Company.name.label("company_name"))
+            .outerjoin(
+                Company, JobApplication.company_id == Company.id
+            )  # Change this line
+            .all()
+        )
+
+        # Convert the result to a list of dictionaries to be JSON serializable
+        applications = [
+            {
+                **application.JobApplication.to_dict(),  # Serialize the JobApplication data
+                "company_name": application.company_name
+                or "N/A",  # Add the company name or 'N/A' if it's None
+            }
+            for application in applications
+        ]
+
+        return applications, 200
 
     def post(self):
         new_application = JobApplication(

@@ -38,7 +38,23 @@ export function JobApplicationForm() {
 
   const onSubmit = async (data) => {
     console.log("Form submitted", data);
-    // Add your form submission logic here
+
+    
+    const response = await fetch("http://127.0.0.1:5555/applications", {
+      method: "POST", // or 'PATCH' if you're updating an existing job application
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      // Handle error
+      console.error("Failed to save job application");
+    } else {
+      // Handle success
+      console.log("Job application saved successfully");
+    }
   };
 
   const options = [
@@ -138,7 +154,7 @@ export function JobApplicationForm() {
               <FormLabel>Ghosting</FormLabel>
               <FormControl>
                 <ComboBoxResponsive
-                  {...field}
+                  field={field}
                   options={[
                     { value: "yes", label: "Yes" },
                     { value: "no", label: "No" },
@@ -160,7 +176,7 @@ export function JobApplicationForm() {
               <FormLabel>Current Stage</FormLabel>
               <FormControl>
                 <ComboBoxResponsive
-                  {...field}
+                  field={field}
                   options={[
                     {
                       value: "application_submitted",
