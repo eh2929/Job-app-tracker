@@ -172,23 +172,24 @@ class JobApplicationListResource(Resource):
 
     def post(self):
         new_application = JobApplication(
-            user_id=request.json["user_id"],
-            company_id=request.json["company_id"],
+            user_id=1,  # Hardcoded user_id
+            company_id=request.json.get("company_id"),
             job_title=request.json["job_title"],
             application_date=request.json["application_date"],
-            status=request.json["status"],
-            job_description=request.json["job_description"],
-            application_deadline=request.json["application_deadline"],
-            salary_offered=request.json["salary_offered"],
-            first_interview_date=request.json["first_interview_date"],
-            second_interview_date=request.json["second_interview_date"],
-            follow_up_date=request.json["follow_up_date"],
-            rejection_date=request.json["rejection_date"],
-            ghosting=request.json["ghosting"],
-            current_stage=request.json["current_stage"],
+            status=request.json.get("status"),
+            job_description=request.json.get("job_description"),
+            application_deadline=request.json.get("application_deadline"),
+            salary_offered=request.json.get("salary_offered"),
+            first_interview_date=request.json.get("first_interview_date"),
+            second_interview_date=request.json.get("second_interview_date"),
+            follow_up_date=request.json.get("follow_up_date"),
+            rejection_date=request.json.get("rejection_date"),
+            ghosting=request.json.get("ghosting"),
+            current_stage=request.json.get("current_stage"),
         )
         db.session.add(new_application)
         db.session.commit()
+        print("New job application created: ", new_application.to_dict())
         return new_application.to_dict(), 201
 
 
