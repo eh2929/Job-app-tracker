@@ -5,7 +5,7 @@ from flask_restful import Resource
 from config import app, db, api
 
 
-from models import User, Company, Contact, JobApplication, InterviewStage
+from models import User, JobApplication, InterviewStage
 
 
 @app.route("/")
@@ -60,153 +60,23 @@ class UserResource(Resource):
 api.add_resource(UserResource, "/users/<int:user_id>")
 
 
-# companies
-class CompanyListResource(Resource):
-    def get(self):
-        companies = Company.query.all()
-        return [company.to_dict() for company in companies], 200
-
-    def post(self):
-        new_company = Company(name=request.json["name"])
-        db.session.add(new_company)
-        db.session.commit()
-        return new_company.to_dict(), 201
-
-
-api.add_resource(CompanyListResource, "/companies")
-
-
-# companies by ID
-class CompanyResource(Resource):
-    def get(self, company_id):
-        company = Company.query.get(company_id)
-        if company:
-            return company.to_dict(), 200
-        else:
-            return {"error": "Company not found"}, 404
-
-    def patch(self, company_id):
-        company = Company.query.get(company_id)
-        if company:
-            company.name = request.json.get("name", company.name)
-            db.session.commit()
-            return company.to_dict(), 200
-        else:
-            return {"error": "Company not found"}, 404
-
-    def delete(self, company_id):
-        company = Company.query.get(company_id)
-        if company:
-            db.session.delete(company)
-            db.session.commit()
-            return {"message": "Company deleted"}, 200
-        else:
-            return {"error": "Company not found"}, 404
-
-
-api.add_resource(CompanyResource, "/companies/<int:company_id>")
-
-
-# contacts
-class ContactListResource(Resource):
-    def get(self):
-        contacts = Contact.query.all()
-        return [contact.to_dict() for contact in contacts], 200
-
-    def post(self):
-        new_contact = Contact(
-            name=request.json["name"],
-            position=request.json["position"],
-            email=request.json["email"],
-            phone=request.json["phone"],
-            company_id=request.json["company_id"],
-        )
-        db.session.add(new_contact)
-        db.session.commit()
-        return new_contact.to_dict(), 201
-
-
-api.add_resource(ContactListResource, "/contacts")
-
-
-# contacts by ID
-class ContactResource(Resource):
-    def get(self, contact_id):
-        contact = Contact.query.get(contact_id)
-        if contact:
-            return contact.to_dict(), 200
-        else:
-            return {"error": "Contact not found"}, 404
-
-    def patch(self, contact_id):
-        contact = Contact.query.get(contact_id)
-        if contact:
-            contact.name = request.json.get("name", contact.name)
-            contact.position = request.json.get("position", contact.position)
-            contact.email = request.json.get("email", contact.email)
-            contact.phone = request.json.get("phone", contact.phone)
-            contact.company_id = request.json.get("company_id", contact.company_id)
-            db.session.commit()
-            return contact.to_dict(), 200
-        else:
-            return {"error": "Contact not found"}, 404
-
-    def delete(self, contact_id):
-        contact = Contact.query.get(contact_id)
-        if contact:
-            db.session.delete(contact)
-            db.session.commit()
-            return {"message": "Contact deleted"}, 200
-        else:
-            return {"error": "Contact not found"}, 404
-
-
-api.add_resource(ContactResource, "/contacts/<int:contact_id>")
-
-
 # job applications
 class JobApplicationListResource(Resource):
     def get(self):
-        applications = (
-            db.session.query(JobApplication, Company.name.label("company_name"))
-            .outerjoin(
-                Company, JobApplication.company_id == Company.id
-            )  # Change this line
-            .all()
-        )
-
-        # Convert the result to a list of dictionaries to be JSON serializable
-        applications = [
-            {
-                **application.JobApplication.to_dict(),  # Serialize the JobApplication data
-                "company_name": application.company_name
-                or "N/A",  # Add the company name or 'N/A' if it's None
-            }
-            for application in applications
-        ]
-
-        return applications, 200
+        applications = JobApplication.query.all()
+        return [application.to_dict() for application in applications], 200
 
     def post(self):
         new_application = JobApplication(
-            user_id=1,  # Hardcoded user_id
-            company_id=request.json.get("company_id"),
+            user_id=request.json["user_id"],
             job_title=request.json["job_title"],
             application_date=request.json["application_date"],
-            status=request.json.get("status"),
-            job_description=request.json.get("job_description"),
-            application_deadline=request.json.get("application_deadline"),
-            salary_offered=request.json.get("salary_offered"),
-            first_interview_date=request.json.get("first_interview_date"),
-            second_interview_date=request.json.get("second_interview_date"),
-            follow_up_date=request.json.get("follow_up_date"),
-            rejection_date=request.json.get("rejection_date"),
-            ghosting=request.json.get("ghosting"),
-            current_stage=request.json.get("current_stage"),
+            status=request.json["status"],
+            job_description=request.json["job_description"],
+            company=request.json.get("company"),
         )
         db.session.add(new_application)
         db.session.commit()
-        print("New job application created: ", new_application.to_dict())
         return new_application.to_dict(), 201
 
 
@@ -225,11 +95,9 @@ class JobApplicationResource(Resource):
     def patch(self, application_id):
         application = JobApplication.query.get(application_id)
         if application:
-            application.user_id = request.json.get("user_id", application.user_id)
-            application.company_id = request.json.get(
-                "company_id", application.company_id
-            )
+
             application.job_title = request.json.get("job_title", application.job_title)
+            application.company = request.json.get("company", application.company)
             application.application_date = request.json.get(
                 "application_date", application.application_date
             )

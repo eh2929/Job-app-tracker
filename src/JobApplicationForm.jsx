@@ -16,9 +16,9 @@ import { ComboBoxResponsive } from "./ComboBoxResponsive";
 
 const formSchema = z.object({
   user_id: z.number().optional(),
-  company_id: z.number().optional(),
   job_title: z.string(), // required
-  application_date: z.string(), // required
+  application_date: z.string().optional(), // required
+  company: z.string().optional(),
   status: z.string().optional(),
   job_description: z.string().optional(),
   application_deadline: z.string().optional(),
@@ -37,15 +37,17 @@ export function JobApplicationForm() {
   });
 
   const onSubmit = async (data) => {
-    console.log("Form submitted", data);
+    console.log("Form data", data); // Log the form data to the console
 
-    
     const response = await fetch("http://127.0.0.1:5555/applications", {
-      method: "POST", // or 'PATCH' if you're updating an existing job application
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        ...data,
+        user_id: "1",
+      }),
     });
 
     if (!response.ok) {
@@ -72,20 +74,6 @@ export function JobApplicationForm() {
       >
         <FormField
           control={form.control}
-          name="company_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Company ID</FormLabel>
-              <FormControl>
-                <Input placeholder="Company ID" {...field} />
-              </FormControl>
-              <FormDescription>Enter the ID of the company.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="job_title"
           render={({ field }) => (
             <FormItem>
@@ -96,6 +84,20 @@ export function JobApplicationForm() {
               <FormDescription>
                 Enter the title of the job you're applying for.
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="company" // Make sure this matches the name of the field in the form data
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company</FormLabel>
+              <FormControl>
+                <Input placeholder="Company" {...field} />
+              </FormControl>
+              <FormDescription>Enter the name of the company.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -142,57 +144,6 @@ export function JobApplicationForm() {
                 <Input placeholder="Job Description" {...field} />
               </FormControl>
               <FormDescription>Enter the job description.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="ghosting"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ghosting</FormLabel>
-              <FormControl>
-                <ComboBoxResponsive
-                  field={field}
-                  options={[
-                    { value: "yes", label: "Yes" },
-                    { value: "no", label: "No" },
-                  ]}
-                />
-              </FormControl>
-              <FormDescription>
-                Select whether the company ghosted you.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="current_stage"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Current Stage</FormLabel>
-              <FormControl>
-                <ComboBoxResponsive
-                  field={field}
-                  options={[
-                    {
-                      value: "application_submitted",
-                      label: "Application Submitted",
-                    },
-                    {
-                      value: "interview_scheduled",
-                      label: "Interview Scheduled",
-                    },
-                    { value: "awaiting_decision", label: "Awaiting Decision" },
-                  ]}
-                />
-              </FormControl>
-              <FormDescription>
-                Select the current stage of the application.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

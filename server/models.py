@@ -14,38 +14,11 @@ class User(db.Model, SerializerMixin):
     serialize_rules = ("-applications.user",)
 
 
-class Company(db.Model, SerializerMixin):
-    __tablename__ = "company"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    # relationships
-    contacts = relationship("Contact", backref="company")
-    applications = relationship("JobApplication", backref="company")
-    # serialize rules
-    serialize_rules = (
-        "-contacts.company",
-        "-applications.company",
-    )
-
-
-class Contact(db.Model, SerializerMixin):
-    __tablename__ = "contact"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    position = Column(String)
-    email = Column(String)
-    phone = Column(String)
-    company_id = Column(Integer, ForeignKey("company.id"))
-    # relationships
-    # serialize rules
-    serialize_rules = ("-company",)
-
-
 class JobApplication(db.Model, SerializerMixin):
     __tablename__ = "job_application"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"))
-    company_id = Column(Integer, ForeignKey("company.id"))
+    company = Column(String)
     job_title = Column(String)
     application_date = Column(String)
     status = Column(String)
@@ -63,7 +36,6 @@ class JobApplication(db.Model, SerializerMixin):
     # serialize rules
     serialize_rules = (
         "-user.applications",
-        "-company.applications",
         "-stages.job_application",
     )
 
