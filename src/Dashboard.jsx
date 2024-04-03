@@ -20,11 +20,23 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
 function Dashboard() {
   const [applications, setApplications] = useState([]);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const data = applications.reduce((acc, application) => {
+    const index = acc.findIndex((item) => item.name === application.status);
+    if (index !== -1) {
+      acc[index].count += 1;
+    } else {
+      acc.push({ name: application.status, count: 1 });
+    }
+    return acc;
+  }, []);
+  console.log(data);
 
   const handleDelete = (event, applicationId) => {
     event.stopPropagation(); // Prevent triggering the card's onClick event
@@ -133,7 +145,7 @@ function Dashboard() {
         <DrawerTrigger asChild>
           <Button variant="outline">Edit Application</Button>
         </DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 overflow-auto max-h-screen">
           <DrawerHeader className="text-left">
             <DrawerTitle>Edit Application</DrawerTitle>
             <DrawerDescription>
@@ -227,7 +239,34 @@ function Dashboard() {
                   onChange={handleInputChange}
                 />
               </div>
-
+              <div className="grid gap-2">
+                <Label htmlFor="cover_letter_provided">
+                  Cover Letter Provided
+                </Label>
+                <input
+                  type="checkbox"
+                  id="cover_letter_provided"
+                  name="cover_letter_provided"
+                  checked={selectedApplication.cover_letter_provided}
+                  onChange={(event) =>
+                    handleInputChange({
+                      target: {
+                        name: event.target.name,
+                        value: event.target.checked,
+                      },
+                    })
+                  }
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="job_description">Job Description</Label>
+                <textarea
+                  id="job_description"
+                  name="job_description"
+                  value={selectedApplication.job_description}
+                  onChange={handleInputChange}
+                />
+              </div>
               <Button type="submit" onClick={handleSave}>
                 Save changes
               </Button>
@@ -242,6 +281,17 @@ function Dashboard() {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+      <div>
+        {/* ... existing code ... */}
+        <BarChart width={500} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="count" fill="#8884d8" />
+        </BarChart>
+        {/* ... existing code ... */}
+      </div>
     </div>
   );
 }

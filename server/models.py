@@ -31,8 +31,13 @@ class JobApplication(db.Model, SerializerMixin):
     rejection_date = Column(String)
     ghosting = Column(Boolean)
     current_stage = Column(String)
+    cover_letter_provided = Column(Boolean)  # New attribute for cover letter
+    job_source = Column(String)  # New attribute for job source
+    num_interviews = Column(Integer)  # New attribute for number of interviews
+
     # relationships
     stages = relationship("InterviewStage", backref="job_application")
+
     # serialize rules
     serialize_rules = (
         "-user.applications",
