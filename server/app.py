@@ -127,6 +127,9 @@ class JobApplicationResource(Resource):
             application.current_stage = request.json.get(
                 "current_stage", application.current_stage
             )
+            application.cover_letter_provided = request.json.get(
+                "cover_letter_provided", application.cover_letter_provided
+            )
             db.session.commit()
             return application.to_dict(), 200
         else:

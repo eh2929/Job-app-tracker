@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
+import ApplicationLineChart from "./ApplicationLineChart";
 import {
   Drawer,
   DrawerClose,
@@ -20,23 +21,11 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
 function Dashboard() {
   const [applications, setApplications] = useState([]);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const data = applications.reduce((acc, application) => {
-    const index = acc.findIndex((item) => item.name === application.status);
-    if (index !== -1) {
-      acc[index].count += 1;
-    } else {
-      acc.push({ name: application.status, count: 1 });
-    }
-    return acc;
-  }, []);
-  console.log(data);
 
   const handleDelete = (event, applicationId) => {
     event.stopPropagation(); // Prevent triggering the card's onClick event
@@ -54,6 +43,38 @@ function Dashboard() {
       .catch((error) => console.error(error));
   };
 
+    applications.sort(
+      (a, b) => new Date(a.application_date) - new Date(b.application_date)
+    );
+
+    let stageCounts = {
+      "No Reply": 0,
+      Interview: 0,
+      Offer: 0,
+      Accepted: 0,
+      Rejected: 0,
+    };
+
+    let data = applications.map((application) => {
+      if (application.status === "No Reply") {
+        stageCounts["No Reply"]++;
+      } else if (application.status === "Interview") {
+        stageCounts["Interview"]++;
+      } else if (application.status === "Offer") {
+        stageCounts["Offer"]++;
+      } else if (application.status === "Accepted") {
+        stageCounts["Accepted"]++;
+      } else if (application.status === "Rejected") {
+        stageCounts["Rejected"]++;
+      }
+
+      // Return a new data point for this date
+      return {
+        date: application.application_date,
+        ...stageCounts,
+      };
+    });
+
   const handleApplicationClick = (application) => {
     setSelectedApplication(application);
     setDrawerOpen(true);
@@ -64,15 +85,18 @@ function Dashboard() {
   };
 
   const handleInputChange = (event) => {
+    const value =
+      event.target.type === "checkbox"
+        ? event.target.checked
+        : event.target.value;
     setSelectedApplication((prevState) => ({
       ...prevState,
-      [event.target.name]: event.target.value,
+      [event.target.name]: value,
     }));
   };
 
   const handleSave = (event) => {
     event.preventDefault();
-    console.log("Before update", selectedApplication);
 
     fetch(`http://127.0.0.1:5555/applications/${selectedApplication.id}`, {
       method: "PATCH",
@@ -83,7 +107,6 @@ function Dashboard() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("After update", data);
         setApplications((prevApplications) =>
           prevApplications.map((application) =>
             application.id === data.id ? data : application
@@ -101,15 +124,12 @@ function Dashboard() {
     fetch("http://127.0.0.1:5555/applications")
       .then((response) => response.json())
       .then((data) => {
-        console.log(data); // Log the data to the console
         setApplications(data);
       })
       .catch((error) => console.error("Error:", error));
   }, []);
 
-  useEffect(() => {
-    console.log("selectedApplication updated", selectedApplication);
-  }, [selectedApplication]);
+  useEffect(() => {}, [selectedApplication]);
 
   return (
     <div className="grid grid-cols-3 gap-4">
@@ -123,8 +143,9 @@ function Dashboard() {
             <CardTitle>{application.job_title}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p> Company: {application.company}</p>
+            <p>Company: {application.company}</p>
             <p>Application Date: {application.application_date}</p>{" "}
+            <p>Status: {application.status}</p>{" "}
           </CardContent>
           <CardFooter>
             <Button
@@ -141,6 +162,7 @@ function Dashboard() {
           </CardFooter>
         </Card>
       ))}
+      <ApplicationLineChart data={data} />
       <Drawer isOpen={drawerOpen} onClose={handleDrawerClose}>
         <DrawerTrigger asChild>
           <Button variant="outline">Edit Application</Button>
@@ -187,13 +209,17 @@ function Dashboard() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="status">Status</Label>
-                <Input
-                  type="text"
+                <select
                   id="status"
                   name="status"
                   value={selectedApplication.status}
                   onChange={handleInputChange}
-                />
+                >
+                  <option value="Applied">Applied</option>
+                  <option value="Prepping to apply">Prepping to apply</option>
+                  <option value="Interviewing">Interviewing</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
               </div>
               {/* Add more fields as needed */}
               <div className="grid gap-2">
@@ -281,17 +307,6 @@ function Dashboard() {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-      <div>
-        {/* ... existing code ... */}
-        <BarChart width={500} height={300} data={data}>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="count" fill="#8884d8" />
-        </BarChart>
-        {/* ... existing code ... */}
-      </div>
     </div>
   );
 }

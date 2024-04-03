@@ -44,13 +44,19 @@ function ViewJobApplication() {
       <CardContent>
         <p>Company: {application.company}</p>
         <p>Application Date: {application.application_date}</p>
-
         <p>Status: {application.status}</p>
         <p>First Interview Date: {application.first_interview_date || "N/A"}</p>
         <p>Follow Up Date: {application.follow_up_date || "N/A"}</p>
         <p>Rejection Date: {application.rejection_date || "N/A"}</p>
         <p>Salary Offered: {application.salary_offered || "N/A"}</p>
+        <p>
+          Cover Letter Provided: {application.cover_letter_provided ? 
+          "Yes" : "No"}
+        </p>
         <p>Job Description: {application.job_description || "N/A"}</p>
+        <p>Job Source: {application.job_source || "N/A"}</p>
+        <p>Number of Interviews: {application.num_interviews || "N/A"}</p>
+
         {/* Display other application details */}
       </CardContent>
     </Card>
