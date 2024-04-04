@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
-import ApplicationLineChart from "./ApplicationLineChart";
+import FilterPanel from "./FilterPanel";
 import {
   Drawer,
   DrawerClose,
@@ -22,10 +22,13 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-function Dashboard() {
-  const [applications, setApplications] = useState([]);
+function Dashboard({ applications, setFilters, filters }) {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
 
   const handleDelete = (event, applicationId) => {
     event.stopPropagation(); // Prevent triggering the card's onClick event
@@ -43,41 +46,10 @@ function Dashboard() {
       .catch((error) => console.error(error));
   };
 
-    applications.sort(
-      (a, b) => new Date(a.application_date) - new Date(b.application_date)
-    );
-
-    let stageCounts = {
-      "No Reply": 0,
-      Interview: 0,
-      Offer: 0,
-      Accepted: 0,
-      Rejected: 0,
-    };
-
-    let data = applications.map((application) => {
-      if (application.status === "No Reply") {
-        stageCounts["No Reply"]++;
-      } else if (application.status === "Interview") {
-        stageCounts["Interview"]++;
-      } else if (application.status === "Offer") {
-        stageCounts["Offer"]++;
-      } else if (application.status === "Accepted") {
-        stageCounts["Accepted"]++;
-      } else if (application.status === "Rejected") {
-        stageCounts["Rejected"]++;
-      }
-
-      // Return a new data point for this date
-      return {
-        date: application.application_date,
-        ...stageCounts,
-      };
-    });
-
   const handleApplicationClick = (application) => {
     setSelectedApplication(application);
     setDrawerOpen(true);
+    console.log(drawerOpen); // Add this line
   };
 
   const handleDrawerClose = () => {
@@ -120,49 +92,42 @@ function Dashboard() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:5555/applications")
-      .then((response) => response.json())
-      .then((data) => {
-        setApplications(data);
-      })
-      .catch((error) => console.error("Error:", error));
-  }, []);
-
-  useEffect(() => {}, [selectedApplication]);
-
   return (
-    <div className="grid grid-cols-3 gap-4">
-      {" "}
-      {applications.map((application) => (
-        <Card
-          key={application.id}
-          onClick={() => handleApplicationClick(application)}
-        >
-          <CardHeader>
-            <CardTitle>{application.job_title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Company: {application.company}</p>
-            <p>Application Date: {application.application_date}</p>{" "}
-            <p>Status: {application.status}</p>{" "}
-          </CardContent>
-          <CardFooter>
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/applications/${application.id}`);
-              }}
-            >
-              View All Details
-            </Button>
-            <Button onClick={(e) => handleDelete(e, application.id)}>
-              Delete
-            </Button>
-          </CardFooter>
-        </Card>
-      ))}
-      <ApplicationLineChart data={data} />
+    <div>
+      <div className="grid grid-cols-3 gap-4">
+        {applications.map((application) => (
+          <Card
+            key={application.id}
+            onClick={() => {
+              console.log("Card clicked");
+              handleApplicationClick(application);
+            }}
+          >
+            <CardHeader>
+              <CardTitle>{application.job_title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Company: {application.company}</p>
+              <p>Application Date: {application.application_date}</p>{" "}
+              <p>Status: {application.status}</p>{" "}
+            </CardContent>
+            <CardFooter>
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/applications/${application.id}`);
+                }}
+              >
+                View All Details
+              </Button>
+              <Button onClick={(e) => handleDelete(e, application.id)}>
+                Delete
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+
       <Drawer isOpen={drawerOpen} onClose={handleDrawerClose}>
         <DrawerTrigger asChild>
           <Button variant="outline">Edit Application</Button>
@@ -307,6 +272,7 @@ function Dashboard() {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+      <FilterPanel filters={filters} onFilterChange={handleFilterChange} />
     </div>
   );
 }

@@ -60,10 +60,69 @@ class UserResource(Resource):
 api.add_resource(UserResource, "/users/<int:user_id>")
 
 
+
 # job applications
 class JobApplicationListResource(Resource):
     def get(self):
-        applications = JobApplication.query.all()
+        # Get query parameters for filtering
+        company = request.args.get("company")
+        job_title = request.args.get("job_title")
+        status = request.args.get("status")
+        min_salary = request.args.get("min_salary")
+        max_salary = request.args.get("max_salary")
+        has_interview = request.args.get("has_interview")
+        has_rejection = request.args.get("has_rejection")
+        has_ghosting = request.args.get("has_ghosting")
+        cover_letter_provided = request.args.get("cover_letter_provided")
+        job_source = request.args.get("job_source")
+
+        # Query job applications
+        applications_query = JobApplication.query
+
+        # Apply filters
+        if company:
+            applications_query = applications_query.filter(
+                JobApplication.company.ilike(f"%{company}%")
+            )
+        if job_title:
+            applications_query = applications_query.filter(
+                JobApplication.job_title.ilike(f"%{job_title}%")
+            )
+        if status:
+            applications_query = applications_query.filter(
+                JobApplication.status == status
+            )
+        if min_salary:
+            applications_query = applications_query.filter(
+                JobApplication.salary_offered >= min_salary
+            )
+        if max_salary:
+            applications_query = applications_query.filter(
+                JobApplication.salary_offered <= max_salary
+            )
+        if has_interview:
+            applications_query = applications_query.filter(
+                JobApplication.num_interviews > 0
+            )
+        if has_rejection:
+            applications_query = applications_query.filter(
+                JobApplication.status == "Rejected"
+            )
+        if has_ghosting:
+            applications_query = applications_query.filter(
+                JobApplication.ghosting == True
+            )
+        if cover_letter_provided:
+            applications_query = applications_query.filter(
+                JobApplication.cover_letter_provided == True
+            )
+        if job_source:
+            applications_query = applications_query.filter(
+                JobApplication.job_source == job_source
+            )
+
+        # Execute the query and return results
+        applications = applications_query.all()
         return [application.to_dict() for application in applications], 200
 
     def post(self):
