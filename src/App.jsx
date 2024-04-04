@@ -41,6 +41,7 @@ function App() {
           element={
             <Dashboard
               applications={applications}
+              setApplications={setApplications}
               setFilters={setFilters}
               filters={filters}
             />

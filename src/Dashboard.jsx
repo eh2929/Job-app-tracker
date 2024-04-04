@@ -22,7 +22,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-function Dashboard({ applications, setFilters, filters }) {
+function Dashboard({ applications, setApplications, setFilters, filters }) {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
