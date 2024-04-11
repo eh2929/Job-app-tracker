@@ -3,6 +3,16 @@ from sqlalchemy.orm import relationship
 from sqlalchemy_serializer import SerializerMixin
 from config import db
 
+from enum import Enum
+
+
+class ApplicationStatus(Enum):
+    APPLIED = "Applied"
+    INTERVIEW = "Interview"
+    OFFER = "Offer"
+    REJECTED = "Rejected"
+    # Add more statuses as needed
+
 
 class User(db.Model, SerializerMixin):
     __tablename__ = "user"
@@ -54,6 +64,7 @@ class InterviewStage(db.Model, SerializerMixin):
     interview_type = Column(String)
     interviewer = Column(String)
     interview_notes = Column(String)
+    interview_outcome = Column(Boolean)
     # relationships
     # serialize rules
     serialize_rules = ("-job_application",)

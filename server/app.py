@@ -60,7 +60,6 @@ class UserResource(Resource):
 api.add_resource(UserResource, "/users/<int:user_id>")
 
 
-
 # job applications
 class JobApplicationListResource(Resource):
     def get(self):
@@ -127,12 +126,23 @@ class JobApplicationListResource(Resource):
 
     def post(self):
         new_application = JobApplication(
-            user_id=request.json["user_id"],
-            job_title=request.json["job_title"],
-            application_date=request.json["application_date"],
-            status=request.json["status"],
-            job_description=request.json["job_description"],
+            user_id=request.json.get("user_id"),
             company=request.json.get("company"),
+            job_title=request.json.get("job_title"),
+            application_date=request.json.get("application_date"),
+            status=request.json.get("status"),
+            job_description=request.json.get("job_description"),
+            application_deadline=request.json.get("application_deadline"),
+            salary_offered=request.json.get("salary_offered"),
+            first_interview_date=request.json.get("first_interview_date"),
+            second_interview_date=request.json.get("second_interview_date"),
+            follow_up_date=request.json.get("follow_up_date"),
+            rejection_date=request.json.get("rejection_date"),
+            ghosting=request.json.get("ghosting"),
+            current_stage=request.json.get("current_stage"),
+            cover_letter_provided=request.json.get("cover_letter_provided"),
+            job_source=request.json.get("job_source"),
+            num_interviews=request.json.get("num_interviews"),
         )
         db.session.add(new_application)
         db.session.commit()
@@ -154,7 +164,6 @@ class JobApplicationResource(Resource):
     def patch(self, application_id):
         application = JobApplication.query.get(application_id)
         if application:
-
             application.job_title = request.json.get("job_title", application.job_title)
             application.company = request.json.get("company", application.company)
             application.application_date = request.json.get(
@@ -189,10 +198,14 @@ class JobApplicationResource(Resource):
             application.cover_letter_provided = request.json.get(
                 "cover_letter_provided", application.cover_letter_provided
             )
+            application.job_source = request.json.get(
+                "job_source", application.job_source
+            )
+            application.num_interviews = request.json.get(
+                "num_interviews", application.num_interviews
+            )
             db.session.commit()
             return application.to_dict(), 200
-        else:
-            return {"error": "Application not found"}, 404
 
     def delete(self, application_id):
         application = JobApplication.query.get(application_id)
@@ -216,10 +229,11 @@ class InterviewStageListResource(Resource):
     def post(self):
         new_stage = InterviewStage(
             job_application_id=request.json["job_application_id"],
-            stage=request.json["stage"],
-            date=request.json["date"],
-            notes=request.json["notes"],
-            status=request.json["status"],
+            interview_number=request.json["interview_number"],
+            interview_date=request.json["interview_date"],
+            interview_type=request.json["interview_type"],
+            interviewer=request.json["interviewer"],
+            interview_notes=request.json["interview_notes"],
         )
         db.session.add(new_stage)
         db.session.commit()
@@ -244,14 +258,20 @@ class InterviewStageResource(Resource):
             stage.job_application_id = request.json.get(
                 "job_application_id", stage.job_application_id
             )
-            stage.stage = request.json.get("stage", stage.stage)
-            stage.date = request.json.get("date", stage.date)
-            stage.notes = request.json.get("notes", stage.notes)
-            stage.status = request.json.get("status", stage.status)
+            stage.interview_number = request.json.get(
+                "interview_number", stage.interview_number
+            )
+            stage.interview_date = request.json.get(
+                "interview_date", stage.interview_date
+            )
+            stage.interview_type = request.json.get(
+                "interview_type", stage.interview_type
+            )
+            stage.interviewer = request.json.get("interviewer", stage.interviewer)
+            stage.interview_notes = request.json.get(
+                "interview_notes", stage.interview_notes
+            )
             db.session.commit()
-            return stage.to_dict(), 200
-        else:
-            return {"error": "Stage not found"}, 404
 
     def delete(self, stage_id):
         stage = InterviewStage.query.get(stage_id)
