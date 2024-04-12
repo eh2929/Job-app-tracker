@@ -8,8 +8,8 @@ function Page() {
   useEffect(() => {
     fetch("http://127.0.0.1:5555/applications")
       .then((response) => response.json())
-      .then((data) => setApplications(data))
-      .catch((error) => console.error("Error:", error));
+      .then((data) => setApplications(data));
+    console.log(data).catch((error) => console.error("Error:", error));
   }, []);
 
   return (

@@ -4,68 +4,48 @@ import { Link } from "react-router-dom";
 
 export const columns = [
   {
+    id: "application_date",
+    accessor: (d) => new Date(d.application_date),
+    Header: ({ column }) => (
+      <Button variant="ghost" {...column.getSortByToggleProps()}>
+        Application Date
+        {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
+      </Button>
+    ),
+    Cell: ({ value }) => {
+      const date = new Date(value);
+      return <div className="p-2">{date.toLocaleDateString()}</div>;
+    },
+  },
+  {
     id: "company",
     accessor: "company",
     Header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() =>
-          column.toggleSortBy(!column.isSorted || column.isSortedDesc)
-        }
-      >
+      <Button variant="ghost" {...column.getSortByToggleProps()}>
         Company
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
       </Button>
     ),
-    Cell: ({ value }) => <div>{value}</div>,
+    Cell: ({ value }) => <div className="p-2">{value}</div>,
   },
   {
     id: "job_title",
     accessor: "job_title",
     Header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() =>
-          column.toggleSortBy(!column.isSorted || column.isSortedDesc)
-        }
-      >
+      <Button variant="ghost" {...column.getSortByToggleProps()}>
         Job Title
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
       </Button>
     ),
-    Cell: ({ value }) => <div>{value}</div>,
-  },
-  {
-    id: "application_date",
-    accessor: "application_date",
-    Header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() =>
-          column.toggleSortBy(!column.isSorted || column.isSortedDesc)
-        }
-      >
-        Application Date
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    Cell: ({ value }) => {
-      const date = new Date(value);
-      return <div>{date.toLocaleDateString()}</div>;
-    },
+    Cell: ({ value }) => <div className="p-2">{value}</div>,
   },
   {
     id: "status",
     accessor: "status",
     Header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() =>
-          column.toggleSortBy(!column.isSorted || column.isSortedDesc)
-        }
-      >
+      <Button variant="ghost" {...column.getSortByToggleProps()}>
         Status
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
       </Button>
     ),
     Cell: ({ value }) => value.toUpperCase(),

@@ -31,7 +31,6 @@ function App() {
     source: "job_source",
     target: "current_stage",
   });
-  
 
   useEffect(() => {
     // Fetch data with filters
@@ -97,17 +96,19 @@ function App() {
         <Route
           path="/"
           element={
-            <Dashboard
-              applications={applications}
-              setApplications={setApplications}
-              setFilters={setFilters}
-              filters={filters}
-            />
+            <div className="p-5">
+              <Dashboard
+                applications={applications}
+                setApplications={setApplications}
+                setFilters={setFilters}
+                filters={filters}
+              />
+            </div>
           }
         />
         <Route path="/applications/:id" element={<ViewJobApplication />} />
       </Routes>
-      <form>
+      <form className="flex justify-center">
         <label>
           Source:
           <select
@@ -142,7 +143,9 @@ function App() {
           </select>
         </label>
       </form>
-      <SankeyDiagram data={sankeyData} />
+      <div className="p-5">
+        <SankeyDiagram data={sankeyData} />
+      </div>
     </Router>
   );
 }

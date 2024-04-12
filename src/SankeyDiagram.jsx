@@ -39,7 +39,11 @@ function SankeyDiagram({ data }) {
     paper_bgcolor: "rgba(1, 22, 39, 0.8)", // dark background color for the entire chart area
   };
 
-  return <Plot data={[trace]} layout={layout} />;
+  return (
+    <div className="flex justify-center">
+      <Plot data={[trace]} layout={layout} />
+    </div>
+  );
 }
 
 export default SankeyDiagram;
