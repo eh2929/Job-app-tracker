@@ -138,7 +138,7 @@ export function JobApplicationForm() {
                   name="status"
                   control={form.control}
                   render={({ field }) => (
-                    <select {...field}>
+                    <select className="bg-gray-500" {...field}>
                       <option value="">Select...</option>
                       {options.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -242,12 +242,13 @@ export function JobApplicationForm() {
         />
         <FormField
           control={form.control}
+          
           name="cover_letter_provided"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Cover Letter Provided</FormLabel>
-              <FormControl>
-                <Input type="checkbox" {...field} />
+              <FormLabel >Cover Letter Provided</FormLabel>
+              <FormControl >
+                <Input  type="checkbox" {...field}  />
               </FormControl>
               <FormDescription>
                 Check if a cover letter was provided.
@@ -351,7 +352,7 @@ export function JobApplicationForm() {
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <Button className="bg-gray-500" type="submit">Submit</Button>
       </form>
     </Form>
   );

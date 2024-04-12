@@ -18,7 +18,7 @@ function SankeyDiagram({ data }) {
         width: 0.5,
       },
       label: data.labels,
-      color: data.colors,
+      color: "data.colors",
     },
     link: {
       source: data.sources,
@@ -28,12 +28,15 @@ function SankeyDiagram({ data }) {
   };
 
   const layout = {
-    title: "Sankey Diagram",
+    title: "Job Applications",
     height: 600,
     width: 600,
     font: {
       size: 10,
+      color: "white",
     },
+
+    paper_bgcolor: "rgba(1, 22, 39, 0.8)", // dark background color for the entire chart area
   };
 
   return <Plot data={[trace]} layout={layout} />;

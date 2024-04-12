@@ -239,7 +239,7 @@ function ViewJobApplication() {
                 type="text"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               />
             </label>
             <label className="flex flex-col">
@@ -248,7 +248,7 @@ function ViewJobApplication() {
                 type="text"
                 value={jobTitle}
                 onChange={(e) => setJobTitle(e.target.value)}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               />
             </label>
             <label className="flex flex-col">
@@ -257,7 +257,7 @@ function ViewJobApplication() {
                 type="date"
                 value={formatDate(applicationDate)}
                 onChange={(e) => setApplicationDate(new Date(e.target.value))}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               />
             </label>
             <label className="flex flex-col">
@@ -265,7 +265,7 @@ function ViewJobApplication() {
               <select
                 value={currentStatus}
                 onChange={(e) => setCurrentStatus(e.target.value)}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               >
                 {options.map((option) => (
                   <option
@@ -279,20 +279,21 @@ function ViewJobApplication() {
               </select>
             </label>
 
-            <label className="flex flex-col">
+            {/* <label className="flex flex-col">
               Notes:
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
+                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               />
-            </label>
+            </label> */}
             <label className="flex flex-col">
               Follow Up Date:
               <input
                 type="date"
                 value={followUpDate}
                 onChange={(e) => setFollowUpDate(e.target.value)}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               />
             </label>
             <label className="flex flex-col">
@@ -301,7 +302,7 @@ function ViewJobApplication() {
                 type="date"
                 value={rejectionDate}
                 onChange={(e) => setRejectionDate(e.target.value)}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               />
             </label>
             <label className="flex flex-col">
@@ -310,7 +311,7 @@ function ViewJobApplication() {
                 type="checkbox"
                 checked={coverLetterProvided}
                 onChange={(e) => setCoverLetterProvided(e.target.checked)}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               />
             </label>
             <label className="flex flex-col">
@@ -319,7 +320,7 @@ function ViewJobApplication() {
                 type="text"
                 value={jobSource}
                 onChange={(e) => setJobSource(e.target.value)}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               />
             </label>
             <label className="flex flex-col">
@@ -328,10 +329,12 @@ function ViewJobApplication() {
                 type="number"
                 value={numInterviews}
                 onChange={(e) => setNumInterviews(e.target.value)}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               />
             </label>
-            <Button type="submit">Submit</Button>
+            <Button className="bg-gray-400" type="submit">
+              Submit
+            </Button>
           </form>
 
           <DrawerFooter>

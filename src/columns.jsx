@@ -75,7 +75,7 @@ export const columns = [
     accessor: "id",
     Cell: ({ value }) => (
       <Link to={`/applications/${value}`}>
-        <Button>View All Details</Button>
+        <Button className="bg-gray-500">View All Details</Button>
       </Link>
     ),
   },

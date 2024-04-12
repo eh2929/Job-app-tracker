@@ -107,45 +107,41 @@ function App() {
         />
         <Route path="/applications/:id" element={<ViewJobApplication />} />
       </Routes>
-      
-        <form>
-          <label>
-            Source:
-            <select
-              name="source"
-              value={sankeyOptions.source}
-              onChange={handleSankeyOptionChange}
-            >
-              <option value="job_source">Job Source</option>
-              <option value="company">Company</option>
-              <option value="job_title">Job Title</option>
-              <option value="status">Status</option>
-              <option value="cover_letter_provided">
-                Cover Letter Provided
-              </option>
-              <option value="num_interviews">Number of Interviews</option>
-              {/* Add other options as needed */}
-            </select>
-          </label>
-          <label>
-            Target:
-            <select
-              name="target"
-              value={sankeyOptions.target}
-              onChange={handleSankeyOptionChange}
-            >
-              <option value="current_stage">Current Stage</option>
-              <option value="job_title">Job Title</option>
-              <option value="status">Status</option>
-              <option value="cover_letter_provided">
-                Cover Letter Provided
-              </option>
-              <option value="num_interviews">Number of Interviews</option>
-              {/* Add other options as needed */}
-            </select>
-          </label>
-        </form>
-      
+      <form>
+        <label>
+          Source:
+          <select
+            name="source"
+            value={sankeyOptions.source}
+            onChange={handleSankeyOptionChange}
+            className="bg-gray-800 text-white border-blue-700"
+          >
+            <option value="job_source">Job Source</option>
+            <option value="company">Company</option>
+            <option value="job_title">Job Title</option>
+            <option value="status">Status</option>
+            <option value="cover_letter_provided">Cover Letter Provided</option>
+            <option value="num_interviews">Number of Interviews</option>
+            {/* Add other options as needed */}
+          </select>
+        </label>
+        <label>
+          Target:
+          <select
+            name="target"
+            value={sankeyOptions.target}
+            onChange={handleSankeyOptionChange}
+            className="bg-gray-800 text-white border-blue-700"
+          >
+            <option value="current_stage">Current Stage</option>
+            <option value="job_title">Job Title</option>
+            <option value="status">Status</option>
+            <option value="cover_letter_provided">Cover Letter Provided</option>
+            <option value="num_interviews">Number of Interviews</option>
+            {/* Add other options as needed */}
+          </select>
+        </label>
+      </form>
       <SankeyDiagram data={sankeyData} />
     </Router>
   );
