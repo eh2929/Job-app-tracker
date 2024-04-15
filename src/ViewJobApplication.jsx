@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -47,16 +47,8 @@ function capitalizeFirstLetter(string) {
 function ViewJobApplication() {
   const { id } = useParams();
   const [application, setApplication] = useState(null);
-
-  //open and close drawer
-  // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  // const openDrawer = () => setIsDrawerOpen(true);
-  // const closeDrawer = () => {
-  //   console.log("Closing drawer");
-  //   setIsDrawerOpen(false);
-  // };
-  // const [loading, setLoading] = useState(true);
+  const [successMessage, setSuccessMessage] = useState("");
+  const navigate = useNavigate();
 
   // Create a state variable for each field in the form
   const [companyName, setCompanyName] = useState("");
@@ -67,9 +59,9 @@ function ViewJobApplication() {
   const [followUpDate, setFollowUpDate] = useState("");
   const [rejectionDate, setRejectionDate] = useState("");
   const [coverLetterProvided, setCoverLetterProvided] = useState("");
-  // For the second issue, ensure that the initial state for your input fields is either an empty string or undefined, not null.
-  const [jobSource, setJobSource] = useState(""); // or useState(undefined);
-  const [numInterviews, setNumInterviews] = useState(""); // or useState(undefined);
+
+  const [jobSource, setJobSource] = useState("");
+  const [numInterviews, setNumInterviews] = useState("");
   const [loading, setLoading] = useState(true);
 
   const options = [
@@ -83,7 +75,7 @@ function ViewJobApplication() {
   const resetForm = () => {
     setCompanyName("");
     setJobTitle("");
-    setApplicationDate(""); // or set it to a date string in the correct format
+    setApplicationDate("");
     setCurrentStage("");
     setNotes("");
     setFollowUpDate("");
@@ -91,7 +83,21 @@ function ViewJobApplication() {
     setCoverLetterProvided("");
     setJobSource("");
     setNumInterviews("");
-    // closeDrawer();
+  };
+
+  const handleDelete = () => {
+    fetch(`http://127.0.0.1:5555/applications/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Data after delete:", data);
+        setSuccessMessage("Application deleted successfully");
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   useEffect(() => {
@@ -129,7 +135,6 @@ function ViewJobApplication() {
       });
   }, [id]);
 
-  // In your render method, show a loading indicator if loading is true
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -162,7 +167,7 @@ function ViewJobApplication() {
       .then((response) => response.json())
       .then((data) => {
         console.log("Data after update:", data); // Log the data after update
-        // Update the application state with the new data
+
         setApplication(data);
       })
       .catch((error) => {
@@ -172,6 +177,7 @@ function ViewJobApplication() {
 
   return (
     <Card>
+      {successMessage && <div>{successMessage}</div>}
       <CardHeader>
         <CardTitle>{application && application.job_title}</CardTitle>
         <CardDescription>
@@ -227,6 +233,9 @@ function ViewJobApplication() {
         <DrawerTrigger className="flex flex-col space-y-4 mt-1 p-2 border-gray-300-rounded">
           Edit Application
         </DrawerTrigger>
+        <Button onClick={handleDelete} className="bg-red-500 text-white">
+          Delete Application
+        </Button>
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Edit Application</DrawerTitle>
@@ -279,14 +288,6 @@ function ViewJobApplication() {
               </select>
             </label>
 
-            {/* <label className="flex flex-col">
-              Notes:
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
-              />
-            </label> */}
             <label className="flex flex-col">
               Follow Up Date:
               <input
