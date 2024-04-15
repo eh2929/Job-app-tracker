@@ -22,22 +22,16 @@ import {
 } from "@/components/ui/drawer";
 
 const formatDate = (dateString) => {
-  let date;
-  // If dateString is a string, convert it to a Date object
   if (typeof dateString === "string") {
-    date = new Date(dateString);
+    if (dateString.includes("/")) {
+      const [month, day, year] = dateString.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`; // returns date in "yyyy-MM-dd" format
+    } else if (dateString.includes("-")) {
+      return dateString; // already in "yyyy-MM-dd" format
+    }
   }
 
-  // If date is not a valid date, return an empty string
-  if (isNaN(date.getTime())) {
-    return "";
-  }
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-indexed in JavaScript
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`; // returns date in "yyyy-MM-dd" format
+  return "";
 };
 
 function capitalizeFirstLetter(string) {
@@ -265,7 +259,7 @@ function ViewJobApplication() {
               <input
                 type="date"
                 value={formatDate(applicationDate)}
-                onChange={(e) => setApplicationDate(new Date(e.target.value))}
+                onChange={(e) => setApplicationDate(e.target.value)}
                 className="mt-1 p-2 border border-gray-500 rounded bg-gray-500"
               />
             </label>
